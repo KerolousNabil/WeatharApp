@@ -1,12 +1,13 @@
 package com.example.weatherapp
 
 import android.Manifest
-import android.R.attr.country
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.location.Geocoder
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.Menu
+import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -24,14 +25,15 @@ import com.koushikdutta.ion.Ion
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 import java.util.*
-import kotlin.system.exitProcess
 
 
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var textallow:TextView
     private lateinit var resultx : TextView
     private lateinit var namecity: TextView
     private lateinit var iconweather : ImageView
+    private lateinit var iconlocation : ImageView
+    private lateinit var linearwave:LinearLayout
     private lateinit var userRecyclerview : RecyclerView
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     val PERMISSION_ID = 42
@@ -40,22 +42,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-       setSupportActionBar(toolbar)
+        setSupportActionBar(toolbar)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         checkPermissions()
 
 
 
+        textallow = findViewById(R.id.textpermission)
+        textallow.visibility = View.GONE
+        iconlocation = findViewById(R.id.iconlocation)
+        linearwave = findViewById(R.id.linearwave)
         resultx = findViewById(R.id.tvSunSetTime)
-        //   buttonx = findViewById(R.id.buSunset)
         namecity = findViewById(R.id.name_of_city)
-        iconweather = findViewById(R.id.imageView)
-
+        iconweather = findViewById(R.id.imageView_icon_weather)
         userRecyclerview = findViewById(R.id.recyclerView)
         userRecyclerview.layoutManager = LinearLayoutManager(this , LinearLayoutManager.VERTICAL , false)
         userRecyclerview.setHasFixedSize(true)
 
     }
+
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.search_menu, menu)
@@ -326,8 +332,10 @@ class MainActivity : AppCompatActivity() {
             }
             else {
 
+                textallow.visibility = View.VISIBLE
+                iconlocation.visibility = View.GONE
+                linearwave.visibility = View.GONE
 
-                Toast.makeText(this,"Please provide the required permission",Toast.LENGTH_SHORT).show();
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
